@@ -348,15 +348,53 @@ function downloadCertificate() {
                 }
             };
         }
-
-        function showBrowserFingerprint() {
-            document.getElementById('toolArea').innerHTML = ` 
-                <p>Din browserinformation:</p>
-                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
-                <p><strong>Language:</strong> ${navigator.language}</p>
-            `;
-        }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script>
+    function showBrowserFingerprint() {
+        // Detect User-Agent (Browser, OS, etc.)
+        const userAgent = navigator.userAgent;
+        const language = navigator.language;
+        const cores = navigator.hardwareConcurrency || "Unknown"; // Number of CPU cores
+        const memory = navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unknown"; // Approx RAM
+        const screenRes = `${window.screen.width}x${window.screen.height}`; // Screen resolution
+        const colorDepth = `${window.screen.colorDepth}-bit`; // Color depth
+
+        // Detect GPU Info via WebGL
+        function getGPUInfo() {
+            let canvas = document.createElement("canvas");
+            let gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            if (!gl) return "WebGL not supported";
+            let debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+            return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "Unknown GPU";
+        }
+        const gpu = getGPUInfo();
+
+        // Display the results in 'toolArea'
+        document.getElementById('toolArea').innerHTML = `
+            <h2>Browser Fingerprint</h2>
+            <div class="security-result">
+                <p><strong>Browser:</strong> ${userAgent}</p>
+                <p><strong>Language:</strong> ${language}</p>
+                <p><strong>CPU Cores:</strong> ${cores}</p>
+                <p><strong>Approx RAM:</strong> ${memory}</p>
+                <p><strong>GPU:</strong> ${gpu}</p>
+                <p><strong>Screen Resolution:</strong> ${screenRes}</p>
+                <p><strong>Color Depth:</strong> ${colorDepth}</p>
+            </div>
+            <button onclick="copyFingerprint()">Kopier Fingerprint</button>
+        `;
+    }
+
+    // Function to copy fingerprint info
+    function copyFingerprint() {
+        const text = document.querySelector(".security-result").innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Fingerprint kopieret til udklipsholder!");
+        }).catch(err => {
+            alert("Kunne ikke kopiere fingerprint: " + err);
+        });
+    }
+</script>
 </body>
 </html>
