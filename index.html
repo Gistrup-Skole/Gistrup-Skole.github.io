@@ -140,57 +140,65 @@
     </div>
 
     <script>
+        // Function to generate the certificate
+        function generateCertificate() {
+            let name = prompt("Indtast dit navn:");
+            let achievement = prompt("Indtast belønningen/aktiviteten (f.eks. 'Coding #1'):");
 
+            if (name && achievement) {
+                document.getElementById('toolArea').innerHTML = `
+                    <h2>Certifikat</h2>
+                    <div id="certificate" style="border: 5px solid #00ff88; padding: 20px; width: 80%; margin: 20px auto; background-color: #121212; color: white; text-align: center; font-family: 'Arial', sans-serif;">
+                        <h1>Dette Certifikat Tildeles</h1>
+                        <h2 style="font-size: 2rem; color: #00ff88;">${name}</h2>
+                        <p style="font-size: 1.5rem;">For</p>
+                        <p style="font-size: 1.8rem; font-weight: bold; color: #00ff88;">${achievement}</p>
+                        <p style="font-size: 1.2rem; color: #888;">Udtænkt og tildelt af Gistrup Skole</p>
+                        <div style="margin-top: 20px; font-size: 1rem; font-style: italic; color: #ccc;">
+                            <p><strong>Dato:</strong> ${new Date().toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <button onclick="downloadCertificate()">Download Certifikat</button>
+                `;
+            } else {
+                alert("Du skal indtaste både navn og belønning!");
+            }
+        }
 
-function generateCertificate() {
-    // Prompt the user for their name and the achievement
-    let name = prompt("Indtast dit navn:");
-    let achievement = prompt("Indtast belønningen/aktiviteten (f.eks. 'Coding #1'):");
+        // Function to download the certificate
+        function downloadCertificate() {
+            const certificateElement = document.getElementById('certificate');
 
-    if (name && achievement) {
-        // Create the certificate content
-        document.getElementById('toolArea').innerHTML = `
-            <h2>Certifikat</h2>
-            <div id="certificate" style="border: 5px solid #00ff88; padding: 20px; width: 80%; margin: 20px auto; background-color: #121212; color: white; text-align: center; font-family: 'Arial', sans-serif;">
-                <h1>Dette Certifikat Tildeles</h1>
-                <h2 style="font-size: 2rem; color: #00ff88;">${name}</h2>
-                <p style="font-size: 1.5rem;">For</p>
-                <p style="font-size: 1.8rem; font-weight: bold; color: #00ff88;">${achievement}</p>
-                <p style="font-size: 1.2rem; color: #888;">Udtænkt og tildelt af Gistrup Skole</p>
-                <div style="margin-top: 20px; font-size: 1rem; font-style: italic; color: #ccc;">
-                    <p><strong>Dato:</strong> ${new Date().toLocaleDateString()}</p>
-                </div>
-            </div>
-            <button onclick="downloadCertificate()">Download Certifikat</button>
-        `;
-    } else {
-        alert("Du skal indtaste både navn og belønning!");
-    }
-}
+            if (!certificateElement) {
+                alert("Certifikat-elementet blev ikke fundet!");
+                return;
+            }
 
-function downloadCertificate() {
-    // Get the certificate element
-    let certificateElement = document.getElementById('certificate');
-    
-    // Use HTML2Canvas to capture the certificate as an image
-    html2canvas(certificateElement).then(canvas => {
-        // Create an image from the canvas
-        let image = canvas.toDataURL("image/png");
-        
-        // Create a link to download the image
-        let link = document.createElement('a');
-        link.href = image;
-        link.download = 'certifikat.png';
-        link.click();
-    });
-}
+            // Use html2canvas to capture the certificate as an image
+            html2canvas(certificateElement).then(canvas => {
+                // Convert the canvas to a data URL (PNG image)
+                const image = canvas.toDataURL("image/png");
 
+                // Create a temporary link to trigger the download
+                const link = document.createElement('a');
+                link.href = image;
+                link.download = 'certifikat.png'; // Name of the downloaded file
+                document.body.appendChild(link);
+                link.click(); // Trigger the download
+                document.body.removeChild(link); // Clean up
+            }).catch(error => {
+                console.error("Fejl under generering af certifikat:", error);
+                alert("Der opstod en fejl under generering af certifikatet.");
+            });
+        }
 
+        // Function to show/hide tabs
         function showTab(tabId) {
             document.querySelectorAll('.content').forEach(div => div.style.display = 'none');
             document.getElementById(tabId).style.display = 'block';
         }
 
+        // Function to ask for password
         function askForPassword() {
             let password = prompt("Indtast adgangskoden for at få adgang til Dev Tools:");
             if (password === "TheNewITGuy") {
@@ -203,11 +211,11 @@ function downloadCertificate() {
         // Password Generator Function
         function generatePassword() {
             const danishWords = [
-  "Hund", "Kanin", "Fugl", "Ko", "Kat", "Hest", "Mus", "Bjørn", "Tiger", "Løve",
-  "Koala", "Ræv", "Ulve", "Gås", "And", "Høne", "Muldvarp", "Abe", "Egern", "Rådyr",
-  "Skildpadde", "Haj", "Giraf", "Zebra", "Slange", "Bison", "Bæver", "Lama", "Fisk",
-  "Bille", "Sommerfugl", "Hummer", "Krabbe", "Reje", "Sæl", "Delfin", "Flodhest", "speciallægepraksisplanlægningsstabiliseringsperiode"
-];
+                "Hund", "Kanin", "Fugl", "Ko", "Kat", "Hest", "Mus", "Bjørn", "Tiger", "Løve",
+                "Koala", "Ræv", "Ulve", "Gås", "And", "Høne", "Muldvarp", "Abe", "Egern", "Rådyr",
+                "Skildpadde", "Haj", "Giraf", "Zebra", "Slange", "Bison", "Bæver", "Lama", "Fisk",
+                "Bille", "Sommerfugl", "Hummer", "Krabbe", "Reje", "Sæl", "Delfin", "Flodhest", "speciallægepraksisplanlægningsstabiliseringsperiode"
+            ];
             const randomWord = danishWords[Math.floor(Math.random() * danishWords.length)];
             const randomNumber = Math.floor(Math.random() * 10000); // Random number between 0-9999
             const password = randomWord + randomNumber;
@@ -286,6 +294,7 @@ function downloadCertificate() {
             window.buyAutoClicker = buyAutoClicker;
         }
 
+        // Hacking Challenge
         function startHackingChallenge() {
             let timeLeft = 30;
             const password = "cyb3rSafe!"; // Hidden password
@@ -317,6 +326,7 @@ function downloadCertificate() {
             };
         }
 
+        // Typing Test
         function startTypingTest() {
             const testText = "Cybersecurity er vigtigt.";
             document.getElementById('gameArea').innerHTML = ` 
@@ -348,53 +358,50 @@ function downloadCertificate() {
                 }
             };
         }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-<script>
-    function showBrowserFingerprint() {
-        // Detect User-Agent (Browser, OS, etc.)
-        const userAgent = navigator.userAgent;
-        const language = navigator.language;
-        const cores = navigator.hardwareConcurrency || "Unknown"; // Number of CPU cores
-        const memory = navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unknown"; // Approx RAM
-        const screenRes = `${window.screen.width}x${window.screen.height}`; // Screen resolution
-        const colorDepth = `${window.screen.colorDepth}-bit`; // Color depth
 
-        // Detect GPU Info via WebGL
-        function getGPUInfo() {
-            let canvas = document.createElement("canvas");
-            let gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-            if (!gl) return "WebGL not supported";
-            let debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
-            return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "Unknown GPU";
+        // Browser Fingerprint Demo
+        function showBrowserFingerprint() {
+            const userAgent = navigator.userAgent;
+            const language = navigator.language;
+            const cores = navigator.hardwareConcurrency || "Unknown";
+            const memory = navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unknown";
+            const screenRes = `${window.screen.width}x${window.screen.height}`;
+            const colorDepth = `${window.screen.colorDepth}-bit`;
+
+            function getGPUInfo() {
+                let canvas = document.createElement("canvas");
+                let gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+                if (!gl) return "WebGL not supported";
+                let debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+                return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : "Unknown GPU";
+            }
+            const gpu = getGPUInfo();
+
+            document.getElementById('toolArea').innerHTML = `
+                <h2>Browser Fingerprint</h2>
+                <div class="security-result">
+                    <p><strong>Browser:</strong> ${userAgent}</p>
+                    <p><strong>Language:</strong> ${language}</p>
+                    <p><strong>CPU Cores:</strong> ${cores}</p>
+                    <p><strong>Approx RAM:</strong> ${memory}</p>
+                    <p><strong>GPU:</strong> ${gpu}</p>
+                    <p><strong>Screen Resolution:</strong> ${screenRes}</p>
+                    <p><strong>Color Depth:</strong> ${colorDepth}</p>
+                </div>
+                <button onclick="copyFingerprint()">Kopier Fingerprint</button>
+            `;
         }
-        const gpu = getGPUInfo();
 
-        // Display the results in 'toolArea'
-        document.getElementById('toolArea').innerHTML = `
-            <h2>Browser Fingerprint</h2>
-            <div class="security-result">
-                <p><strong>Browser:</strong> ${userAgent}</p>
-                <p><strong>Language:</strong> ${language}</p>
-                <p><strong>CPU Cores:</strong> ${cores}</p>
-                <p><strong>Approx RAM:</strong> ${memory}</p>
-                <p><strong>GPU:</strong> ${gpu}</p>
-                <p><strong>Screen Resolution:</strong> ${screenRes}</p>
-                <p><strong>Color Depth:</strong> ${colorDepth}</p>
-            </div>
-            <button onclick="copyFingerprint()">Kopier Fingerprint</button>
-        `;
-    }
-
-    // Function to copy fingerprint info
-    function copyFingerprint() {
-        const text = document.querySelector(".security-result").innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Fingerprint kopieret til udklipsholder!");
-        }).catch(err => {
-            alert("Kunne ikke kopiere fingerprint: " + err);
-        });
-    }
-</script>
+        // Function to copy fingerprint info
+        function copyFingerprint() {
+            const text = document.querySelector(".security-result").innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Fingerprint kopieret til udklipsholder!");
+            }).catch(err => {
+                alert("Kunne ikke kopiere fingerprint: " + err);
+            });
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
